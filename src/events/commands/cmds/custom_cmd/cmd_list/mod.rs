@@ -28,7 +28,7 @@ pub async fn cmd_list(
                     _ => {
                         for (i, cmd) in cmd_list.iter().enumerate() {
                             let fmt_cmd = format!(
-                                "**Command {} Key:**\n```{}```\n**Response:**\n```{}```",
+                                "**Command {} Key:**\n```{}```**Response:**\n```{}```",
                                 i, &cmd.0, &cmd.1
                             );
                             let msg_content = match fmt_cmd.len() > 2000 {
