@@ -12,6 +12,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let mut client = Client::builder(&token_str.trim(), intents)
         .event_handler(Handler)
         .await?;
-    client.start_autosharded().await?;
+    client.start_shards(num_cpus::get() as u64).await?;
     Ok(())
 }
