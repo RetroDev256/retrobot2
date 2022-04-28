@@ -2,7 +2,6 @@ use std::error::Error;
 
 use serenity::{
     client::Context, model::interactions::application_command::ApplicationCommandInteraction,
-    utils::MessageBuilder,
 };
 
 use crate::custom_cmds::CUST_CMDS;
@@ -25,13 +24,7 @@ pub async fn cmd_list(
                     true => Some("There are no commands for this server."),
                     _ => {
                         for (i, cmd) in cmd_list.iter().enumerate() {
-                            let mut message = MessageBuilder::new();
-                            let fmt_cmd = message
-                                .push_bold(format!("Command {} Key:", i))
-                                .push_line(&cmd.regex)
-                                .push_bold_line("Response:")
-                                .push(&cmd.response)
-                                .build();
+                            let fmt_cmd = format!("**Command {} Key:**\n{}\n**Response:**\n{}", i, &cmd.regex, &cmd.response);
                             let msg_content = match fmt_cmd.len() >= 2000 {
                                 true => format!("{}...", &fmt_cmd[0..1997]),
                                 _ => fmt_cmd,
