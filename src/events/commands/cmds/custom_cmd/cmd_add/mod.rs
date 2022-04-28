@@ -28,7 +28,7 @@ pub async fn cmd_add(
         },
         _ => None,
     };
-    let reply_option = match int.data.options.get(0) {
+    let reply_option = match int.data.options.get(1) {
         Some(reply_arg) => match reply_arg.resolved.as_ref() {
             Some(ApplicationCommandInteractionDataOptionValue::String(reply_str)) => {
                 Some(reply_str.clone())
