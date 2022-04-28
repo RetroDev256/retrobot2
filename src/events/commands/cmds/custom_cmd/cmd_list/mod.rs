@@ -24,7 +24,7 @@ pub async fn cmd_list(
                     true => Some("There are no commands for this server."),
                     _ => {
                         for (i, cmd) in cmd_list.iter().enumerate() {
-                            let _ = int.create_followup_message(&ctx.http, |followup| {
+                            int.create_followup_message(&ctx.http, |followup| {
                                 let mut message = MessageBuilder::new();
                                 let fmt_cmd = message
                                     .push_bold("Command ")
@@ -39,7 +39,7 @@ pub async fn cmd_list(
                                     true => followup.content(format!("{}...", &fmt_cmd[0..1997])),
                                     _ => followup.content(fmt_cmd),
                                 }
-                            });
+                            }).await?;
                         }
                         None
                     }
