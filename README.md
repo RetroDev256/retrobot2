@@ -1,2 +1,2 @@
-# retrobot2
+# RetroBot™
 Source code to my discord bot
