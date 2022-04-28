@@ -28,7 +28,7 @@ pub async fn cmd_list(
                             let mut message = MessageBuilder::new();
                             let fmt_cmd = message
                                 .push_bold("Command ")
-                                .push_bold(i)
+                                .push(i)
                                 .push_bold_line(':')
                                 .push_bold_line("Regex key:")
                                 .push_line(&cmd.regex)
