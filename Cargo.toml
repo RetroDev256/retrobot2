@@ -12,10 +12,13 @@ codegen-units = 1   # Reduce number of codegen units to increase optimizations.
 panic = 'abort'     # Abort on panic
 
 [dependencies]
+ron = {git = "https://github.com/ron-rs/ron"}
 rand = {git = "https://github.com/rust-random/rand"}
+regex = {git = "https://github.com/rust-lang/regex"}
 tempfile = {git = "https://github.com/Stebalien/tempfile"}
 num_cpus = {git = "https://github.com/seanmonstar/num_cpus"}
 wait-timeout = {git = "https://github.com/alexcrichton/wait-timeout"}
+lazy_static = {git = "https://github.com/rust-lang-nursery/lazy-static.rs"}
 
 [dependencies.tokio]
 version = "1.17"
