@@ -8,13 +8,10 @@ use crate::custom_cmds::CUST_CMDS;
 pub async fn sift_cust_cmd(ctx: Context, msg: Message) -> Result<(), Box<dyn Error>> {
     let server_cmds_opt = match msg.guild_id {
         Some(server_id) => match CUST_CMDS.read() {
-            Ok(lock) => match lock.get(server_id.as_u64()).cloned() {
-                Some(server_cmds) => Some(server_cmds),
-                _ => None
-            },
-            _ => None
+            Ok(lock) => lock.get(server_id.as_u64()).cloned(),
+            _ => None,
         },
-        _ => None
+        _ => None,
     };
     if let Some(server_cmds) = server_cmds_opt {
         for (regex_str, resp) in server_cmds {
