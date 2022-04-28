@@ -1,0 +1,29 @@
+[package]
+name = "retrobot2"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[profile.release]
+opt-level = 3       # Optimize for speed
+lto = true          # Enable Link Time Optimization
+codegen-units = 1   # Reduce number of codegen units to increase optimizations.
+panic = 'abort'     # Abort on panic
+
+[dependencies]
+ron = {git = "https://github.com/ron-rs/ron"} # custom commands
+rand = {git = "https://github.com/rust-random/rand"}
+regex = {git = "https://github.com/rust-lang/regex"} # custom commands
+tempfile = {git = "https://github.com/Stebalien/tempfile"}
+lazy_static = {git = "https://github.com/rust-lang-nursery/lazy-static.rs"} # custom commands
+
+[dependencies.tokio]
+version = "1.17"
+default-features = false
+features = ["macros", "rt-multi-thread", "time"]
+
+[dependencies.serenity]
+git = "https://github.com/serenity-rs/serenity"
+default-features = false
+features = ["client", "gateway", "rustls_backend", "model"]
