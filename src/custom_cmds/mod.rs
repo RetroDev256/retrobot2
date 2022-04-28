@@ -13,8 +13,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
 pub struct Command {
-    regex: String,
-    response: String,
+    pub regex: String,
+    pub response: String,
 }
 impl Command {
     pub fn new(regex: String, response: String) -> Self {
