@@ -3,7 +3,7 @@ use serenity::{
     model::interactions::application_command::ApplicationCommandOptionType,
 };
 
-pub fn cmd_add_setup(cmds: &mut CreateApplicationCommands) {
+pub fn cmd_del_setup(cmds: &mut CreateApplicationCommands) {
     cmds.create_application_command(|cmd| {
         cmd.name("cmd_del")
             .description("Delete a custom regex response to messages")

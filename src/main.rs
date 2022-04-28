@@ -1,3 +1,4 @@
+pub mod custom_cmds;
 mod events;
 
 use events::Handler;
