@@ -66,11 +66,13 @@ fn call_calc(input: String) -> CalcOut {
                             c_stdout.read_to_end(&mut out),
                             c_stderr.read_to_end(&mut err),
                         ) {
-                            (Ok(_), Ok(_)) => {
-                                let output = String::from_utf8_lossy(&out).trim().to_owned();
-                                let errput = String::from_utf8_lossy(&err).trim().to_owned();
-                                CalcOut::Stdio(output, errput)
-                            }
+                            (Ok(_), Ok(_)) => match out.is_empty() && err.is_empty() {
+                                false => CalcOut::Stdio(
+                                    String::from_utf8_lossy(&out).trim().to_owned(),
+                                    String::from_utf8_lossy(&err).trim().to_owned(),
+                                ),
+                                true => CalcOut::Error("No output recieved from calc.".to_string()),
+                            },
                             _ => CalcOut::Error("Failed to read IO handles from calc.".to_string()),
                         }
                     }
@@ -95,13 +97,17 @@ async fn calc_followup(
     result: CalcOut,
 ) -> Result<(), Box<dyn Error>> {
     match result {
-        CalcOut::Stdio(out, err) => match out.len() + err.len() <= 1972 {
-            true => {
-                let content = format!("```\nSTDOUT:\n{}\nSTDERR:\n{}```", out, err);
-                int.create_followup_message(ctx.http, |followup| followup.content(content))
-                    .await?;
-            }
-            false => {
+        CalcOut::Stdio(out, err) => {
+            if out.len() <= 1983 && err.len() <= 1983 {
+                for (name, io) in [("OUT", out), ("ERR", err)] {
+                    if !io.is_empty() {
+                        int.create_followup_message(&ctx.http, |followup| {
+                            followup.content(format!("```\nSTD{}:\n{}```", name, io))
+                        })
+                        .await?;
+                    }
+                }
+            } else {
                 let mut tmp_content = Builder::new().suffix(".txt").tempfile()?;
                 writeln!(
                     tmp_content.as_file_mut(),
@@ -114,7 +120,7 @@ async fn calc_followup(
                 })
                 .await?;
             }
-        },
+        }
         CalcOut::Error(err) => {
             int.create_followup_message(ctx.http, |followup| followup.content(err))
                 .await?;
