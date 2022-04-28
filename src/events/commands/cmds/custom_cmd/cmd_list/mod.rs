@@ -27,10 +27,7 @@ pub async fn cmd_list(
                         for (i, cmd) in cmd_list.iter().enumerate() {
                             let mut message = MessageBuilder::new();
                             let fmt_cmd = message
-                                .push_bold("Command ")
-                                .push(i)
-                                .push_bold_line(':')
-                                .push_bold_line("Regex key:")
+                                .push_bold(format!("Command {} Key:", i))
                                 .push_line(&cmd.regex)
                                 .push_bold_line("Response:")
                                 .push(&cmd.response)
