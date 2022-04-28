@@ -24,7 +24,10 @@ pub async fn cmd_list(
                     true => Some("There are no commands for this server."),
                     _ => {
                         for (i, cmd) in cmd_list.iter().enumerate() {
-                            let fmt_cmd = format!("**Command {} Key:**\n`{}`\n**Response:**\n`{}`", i, &cmd.regex, &cmd.response);
+                            let fmt_cmd = format!(
+                                "**Command {} Key:**\n`{}`\n**Response:**\n`{}`",
+                                i, &cmd.0, &cmd.1
+                            );
                             let msg_content = match fmt_cmd.len() > 2000 {
                                 true => format!("{}...", &fmt_cmd[0..1997]),
                                 _ => fmt_cmd,

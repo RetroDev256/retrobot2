@@ -1,4 +1,4 @@
-use std::{collections::HashSet, error::Error};
+use std::{collections::HashMap, error::Error};
 
 use regex::RegexBuilder;
 use serenity::{
@@ -11,7 +11,7 @@ use serenity::{
     },
 };
 
-use crate::custom_cmds::{Command, CUST_CMDS};
+use crate::custom_cmds::CUST_CMDS;
 
 pub mod setup;
 
@@ -54,19 +54,16 @@ fn try_add_cmd<'a>(
         (Some(regex_str), Some(reply)) => match RegexBuilder::new(&regex_str).build() {
             Ok(_regex) => match CUST_CMDS.write() {
                 Ok(mut lock) => match guild_id {
-                    Some(server_id) => {
-                        let command = Command::new(regex_str, reply);
-                        match lock.get_mut(&server_id.0) {
-                            Some(cmds) => match cmds.insert(command) {
-                                true => "Successfully added new command.",
-                                false => "This command has already been added.",
-                            },
-                            _ => {
-                                let _ = lock.insert(server_id.0, HashSet::from([command]));
-                                "Successfully added first command."
-                            }
+                    Some(server_id) => match lock.get_mut(&server_id.0) {
+                        Some(cmds) => match cmds.insert(regex_str, reply) {
+                            None => "Successfully added new command.",
+                            Some(_) => "Overwrote old command with the same key.",
+                        },
+                        _ => {
+                            let _ = lock.insert(server_id.0, HashMap::from([(regex_str, reply)]));
+                            "Successfully added first command."
                         }
-                    }
+                    },
                     _ => "This is not a server.",
                 },
                 _ => "Unable to obtain a write lock on server commands list.",
