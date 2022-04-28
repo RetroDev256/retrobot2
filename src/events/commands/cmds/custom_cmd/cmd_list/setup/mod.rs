@@ -1,7 +1,4 @@
-use serenity::{
-    builder::CreateApplicationCommands,
-    model::interactions::application_command::ApplicationCommandOptionType,
-};
+use serenity::builder::CreateApplicationCommands;
 
 pub fn cmd_list_setup(cmds: &mut CreateApplicationCommands) {
     cmds.create_application_command(|cmd| {

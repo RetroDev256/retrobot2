@@ -6,8 +6,11 @@ use std::error::Error;
 use serenity::{client::Context, model::interactions::Interaction};
 
 use self::cmds::{
-    acr_generator::acr_generator, calc_ti_call::calc_ti_call, direct_message::direct_message,
-    emoji_dump::emoji_dump, custom_cmd::{cmd_add::cmd_add, cmd_del::cmd_del, cmd_list::cmd_list},
+    acr_generator::acr_generator,
+    calc_ti_call::calc_ti_call,
+    custom_cmd::{cmd_add::cmd_add, cmd_del::cmd_del, cmd_list::cmd_list},
+    direct_message::direct_message,
+    emoji_dump::emoji_dump,
 };
 
 pub async fn command_manage(ctx: Context, interaction: Interaction) -> Result<(), Box<dyn Error>> {

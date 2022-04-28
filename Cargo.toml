@@ -15,6 +15,7 @@ panic = 'abort'     # Abort on panic
 ron = {git = "https://github.com/ron-rs/ron"}
 rand = {git = "https://github.com/rust-random/rand"}
 regex = {git = "https://github.com/rust-lang/regex"}
+serde = {version = "1.0.136", features = ["derive"]}
 tempfile = {git = "https://github.com/Stebalien/tempfile"}
 num_cpus = {git = "https://github.com/seanmonstar/num_cpus"}
 wait-timeout = {git = "https://github.com/alexcrichton/wait-timeout"}
