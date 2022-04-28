@@ -50,7 +50,7 @@ pub async fn cmd_del(
         _ => "You must supply the index of the command.",
     };
     int.create_interaction_response(ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.content(description))
+        resp.interaction_response_data(|data| data.ephemeral(true).content(description))
     })
     .await?;
     Ok(())

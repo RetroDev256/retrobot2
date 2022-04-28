@@ -43,12 +43,11 @@ pub async fn cmd_list(
         },
         _ => Some("Unable to get a read lock on the command list."),
     };
-    for cmd_txt in cmds_to_list {
-        int.create_followup_message(&ctx.http, |followup| followup.content(cmd_txt))
-            .await?;
-    }
     if let Some(response) = response_opt {
-        int.create_followup_message(&ctx.http, |followup| followup.content(response))
+        cmds_to_list.push(response.to_owned());
+    }
+    for cmd_txt in cmds_to_list {
+        int.create_followup_message(&ctx.http, |followup| followup.ephemeral(true).content(cmd_txt))
             .await?;
     }
     Ok(())
