@@ -1,5 +1,5 @@
 use std::{
-    collections::HashMap,
+    collections::{HashMap, HashSet},
     fs::{read_to_string, OpenOptions},
     io::Write,
     sync::{Arc, RwLock},
@@ -11,7 +11,7 @@ use lazy_static::lazy_static;
 use ron::{from_str, to_string};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
 pub struct Command {
     regex: String,
     response: String,
@@ -23,10 +23,10 @@ impl Command {
 }
 
 lazy_static! {
-    pub static ref CUST_CMDS: Arc<RwLock<HashMap<u64, Vec<Command>>>> = setup_cmds();
+    pub static ref CUST_CMDS: Arc<RwLock<HashMap<u64, HashSet<Command>>>> = setup_cmds();
 }
 
-fn setup_cmds() -> Arc<RwLock<HashMap<u64, Vec<Command>>>> {
+fn setup_cmds() -> Arc<RwLock<HashMap<u64, HashSet<Command>>>> {
     let cmds = load_cmds();
     spawn(autosave_cmds);
     Arc::new(RwLock::new(cmds))
@@ -45,6 +45,6 @@ fn autosave_cmds() -> ! {
     }
 }
 
-fn load_cmds() -> HashMap<u64, Vec<Command>> {
+fn load_cmds() -> HashMap<u64, HashSet<Command>> {
     from_str(&read_to_string("cust_cmds.ron").unwrap_or_default()).unwrap_or_default()
 }

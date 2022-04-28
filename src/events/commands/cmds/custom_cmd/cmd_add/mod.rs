@@ -1,10 +1,13 @@
-use std::error::Error;
+use std::{collections::HashSet, error::Error};
 
 use regex::RegexBuilder;
 use serenity::{
     client::Context,
-    model::interactions::application_command::{
-        ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
+    model::{
+        id::GuildId,
+        interactions::application_command::{
+            ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
+        },
     },
 };
 
@@ -34,19 +37,35 @@ pub async fn cmd_add(
         },
         _ => None,
     };
-    let response = match (regex_option, reply_option) {
+    let response = try_add_cmd(regex_option, reply_option, int.guild_id);
+    int.create_interaction_response(ctx.http, |resp| {
+        resp.interaction_response_data(|data| data.content(response))
+    })
+    .await?;
+    Ok(())
+}
+
+fn try_add_cmd<'a>(
+    regex_option: Option<String>,
+    reply_option: Option<String>,
+    guild_id: Option<GuildId>,
+) -> &'a str {
+    match (regex_option, reply_option) {
         (Some(regex_str), Some(reply)) => match RegexBuilder::new(&regex_str).build() {
             Ok(_regex) => match CUST_CMDS.write() {
-                Ok(mut lock) => match int.guild_id {
+                Ok(mut lock) => match guild_id {
                     Some(server_id) => {
                         let command = Command::new(regex_str, reply);
                         match lock.get_mut(&server_id.0) {
-                            Some(cmds) => cmds.push(command),
+                            Some(cmds) => match cmds.insert(command) {
+                                true => "Successfully added new command.",
+                                false => "This command has already been added.",
+                            },
                             _ => {
-                                let _ = lock.insert(server_id.0, vec![command]);
+                                let _ = lock.insert(server_id.0, HashSet::from([command]));
+                                "Successfully added first command."
                             }
                         }
-                        "Sucessfully added command."
                     }
                     _ => "This is not a server.",
                 },
@@ -57,10 +76,5 @@ pub async fn cmd_add(
         (Some(_regex_str), None) => "Response was not provided.",
         (None, Some(_reply)) => "Regex was not provided.",
         _ => "Neither regex nor response was provided.",
-    };
-    int.create_interaction_response(ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.content(response))
-    })
-    .await?;
-    Ok(())
+    }
 }
