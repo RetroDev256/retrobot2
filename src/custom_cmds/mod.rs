@@ -18,7 +18,6 @@ lazy_static! {
 }
 
 fn setup_cmds() -> Arc<RwLock<Servers>> {
-    println!("Loaded: {:?}", load_cmds());
     let cmds = load_cmds();
     let _thread = spawn(autosave_cmds);
     Arc::new(RwLock::new(cmds))
@@ -28,16 +27,17 @@ fn autosave_cmds() -> ! {
     loop {
         sleep(Duration::from_secs(60));
         if let Ok(cmds_lock) = CUST_CMDS.read() {
-            if let Ok(mut file_out) = OpenOptions::new().truncate(true).open("cust_cmds.ron") {
+            if let Ok(mut file_out) = OpenOptions::new()
+                .create(true)
+                .write(true)
+                .truncate(true)
+                .open("cust_cmds.ron")
+            {
                 if let Ok(write_str) = to_string(&*cmds_lock) {
                     let _ = write!(file_out, "{}", write_str);
-                    println!("Saved commands.");
                 }
-                println!("Attempted to save commands.");
             }
-            println!("Attempted to attempt.");
         }
-        println!("Attempted that.");
     }
 }
 
