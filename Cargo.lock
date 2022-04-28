@@ -748,6 +748,7 @@ dependencies = [
  "serenity",
  "tempfile",
  "tokio",
+ "wait-timeout",
 ]
 
 [[package]]
@@ -1201,6 +1202,14 @@ name = "version_check"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
+
+[[package]]
+name = "wait-timeout"
+version = "0.2.0"
+source = "git+https://github.com/alexcrichton/wait-timeout#2a4f0f2e85768735575558b0e97e6c35df815e97"
+dependencies = [
+ "libc",
+]
 
 [[package]]
 name = "want"
