@@ -39,7 +39,7 @@ pub async fn cmd_add(
     };
     let response = try_add_cmd(regex_option, reply_option, int.guild_id);
     int.create_interaction_response(ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.content(response))
+        resp.interaction_response_data(|data| data.ephemeral(true).content(response))
     })
     .await?;
     Ok(())
