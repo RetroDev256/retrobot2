@@ -11,7 +11,7 @@ use lazy_static::lazy_static;
 use ron::{from_str, to_string};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Command {
     regex: String,
     response: String,

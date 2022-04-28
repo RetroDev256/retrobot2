@@ -38,16 +38,16 @@ pub async fn cmd_add(
         (Some(regex_str), Some(reply)) => match RegexBuilder::new(&regex_str).build() {
             Ok(_regex) => match CUST_CMDS.write() {
                 Ok(mut lock) => match int.guild_id {
-                    Some(server_id) => match lock.get_mut(&server_id.0) {
-                        Some(cmds) => {
-                            cmds.push(Command::new(regex_str, reply));
-                            "Sucessfully added command."
+                    Some(server_id) => {
+                        let command = Command::new(regex_str, reply);
+                        match lock.get_mut(&server_id.0) {
+                            Some(cmds) => cmds.push(command),
+                            _ => {
+                                let _ = lock.insert(server_id.0, vec![command]);
+                            }
                         }
-                        _ => match lock.insert(server_id.0, vec![Command::new(regex_str, reply)]) {
-                            Some(_) => "Successfully added first command.",
-                            _ => "Failed to add first command.",
-                        },
-                    },
+                        "Sucessfully added command."
+                    }
                     _ => "This is not a server.",
                 },
                 _ => "Unable to obtain a write lock on server commands list.",
