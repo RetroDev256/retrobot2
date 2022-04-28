@@ -13,7 +13,10 @@ pub async fn cmd_list(
     ctx: Context,
 ) -> Result<(), Box<dyn Error>> {
     int.create_interaction_response(&ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.ephemeral(true).content("Listing commands for the server:"))
+        resp.interaction_response_data(|data| {
+            data.ephemeral(true)
+                .content("Listing commands for the server:")
+        })
     })
     .await?;
     let mut cmds_to_list = vec![];
@@ -47,8 +50,10 @@ pub async fn cmd_list(
         cmds_to_list.push(response.to_owned());
     }
     for cmd_txt in cmds_to_list {
-        int.create_followup_message(&ctx.http, |followup| followup.ephemeral(true).content(cmd_txt))
-            .await?;
+        int.create_followup_message(&ctx.http, |followup| {
+            followup.ephemeral(true).content(cmd_txt)
+        })
+        .await?;
     }
     Ok(())
 }
