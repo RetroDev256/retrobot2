@@ -8,7 +8,6 @@ use std::{
 };
 
 use serenity::{
-    builder::CreateEmbed,
     client::Context,
     model::interactions::application_command::{
         ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
@@ -96,36 +95,11 @@ async fn calc_followup(
     result: CalcOut,
 ) -> Result<(), Box<dyn Error>> {
     match result {
-        CalcOut::Stdio(out, err) => match out.len() < 25600 && err.len() < 25600 {
+        CalcOut::Stdio(out, err) => match out.len() + err.len() <= 1972 {
             true => {
-                let mut stdout_embed = CreateEmbed::default();
-                let mut stderr_embed = CreateEmbed::default();
-                stdout_embed.title("Calc STDOUT:");
-                stderr_embed.title("Calc STDERR:");
-                out.chars()
-                    .collect::<Vec<char>>()
-                    .chunks(1024)
-                    .enumerate()
-                    .for_each(|(i, chunk)| {
-                        stdout_embed.field(format!("Chunk {}", i), chunk.iter().collect::<String>(), true);
-                    });
-                err.chars()
-                    .collect::<Vec<char>>()
-                    .chunks(1024)
-                    .enumerate()
-                    .for_each(|(i, chunk)| {
-                        stderr_embed.field(format!("Chunk {}", i), chunk.iter().collect::<String>(), true);
-                    });
-                int.create_followup_message(ctx.http, |followup| {
-                    if !out.is_empty() {
-                        followup.add_embed(stdout_embed.clone());
-                    }
-                    if !err.is_empty() {
-                        followup.add_embed(stderr_embed.clone());
-                    }
-                    followup
-                })
-                .await?;
+                let content = format!("```\nSTDOUT:\n{}\nSTDERR:\n{}```", out, err);
+                int.create_followup_message(ctx.http, |followup| followup.content(content))
+                    .await?;
             }
             false => {
                 let mut tmp_content = Builder::new().suffix(".txt").tempfile()?;
