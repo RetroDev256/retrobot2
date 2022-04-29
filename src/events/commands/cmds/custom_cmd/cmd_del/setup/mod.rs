@@ -9,7 +9,7 @@ pub fn cmd_del_setup(cmds: &mut CreateApplicationCommands) {
             .description("Delete a custom regex response to messages")
             .create_option(|opt| {
                 opt.name("index")
-                    .description("Regex to match user messages")
+                    .description("Index of regex to match user messages")
                     .kind(ApplicationCommandOptionType::Integer)
                     .required(true)
             })

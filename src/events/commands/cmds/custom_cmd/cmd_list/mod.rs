@@ -21,7 +21,7 @@ pub async fn cmd_list(
     .await?;
     let resp_opt = match int.guild_id {
         Some(guild_id) => {
-            let server_cmds = get_commands(*guild_id.as_u64());
+            let server_cmds = get_commands(guild_id.as_u64());
             match server_cmds.is_empty() {
                 true => Some("Server has no commands"),
                 _ => {

@@ -44,14 +44,14 @@ pub async fn cmd_add(
     Ok(())
 }
 
-fn try_add_cmd<'a>(
+fn try_add_cmd(
     regex_option: Option<String>,
     reply_option: Option<String>,
     guild_id: Option<GuildId>,
 ) -> String {
     match (regex_option, reply_option) {
         (Some(regex_str), Some(reply)) => match guild_id {
-            Some(server_id) => add_command(*server_id.as_u64(), regex_str, reply),
+            Some(server_id) => add_command(server_id.as_u64(), regex_str, reply),
             _ => "This is not a server".to_owned(),
         },
         (Some(_regex_str), None) => "Response was not provided.".to_owned(),

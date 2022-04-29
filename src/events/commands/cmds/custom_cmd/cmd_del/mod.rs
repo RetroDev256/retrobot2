@@ -26,7 +26,7 @@ pub async fn cmd_del(
     };
     let description = match number_option {
         Some(value) => match int.guild_id {
-            Some(guild_id) => remove_command(*guild_id.as_u64(), value),
+            Some(guild_id) => remove_command(guild_id.as_u64(), value),
             _ => "This is not a server.".to_owned(),
         },
         _ => "You must supply the index of the command.".to_owned(),

@@ -23,28 +23,31 @@ lazy_static! {
     static ref CUST_CMDS: Sync<Servers> = setup_cmds();
 }
 
-pub fn get_commands(server_id: u64) -> ServerCmds {
+pub fn get_commands(server_id: &u64) -> ServerCmds {
     if let Ok(lock) = CUST_CMDS.read() {
-        if let Some(cmds) = lock.get(&server_id) {
+        if let Some(cmds) = lock.get(server_id) {
             return cmds.clone();
         }
     }
     vec![]
 }
 
-pub fn add_command(server_id: u64, regex_str: String, reply: String) -> String {
+pub fn add_command(server_id: &u64, regex_str: String, reply: String) -> String {
     match RegexBuilder::new(&regex_str).size_limit(1 << 20).build() {
         Ok(regex) => {
             let entry = (regex, regex_str, reply);
             match CUST_CMDS.write() {
                 Ok(mut lock) => {
                     CHANGED.store(true, Ordering::Relaxed);
-                    match lock.insert(server_id, vec![entry.clone()]) {
-                        Some(mut server_cmds) => {
+                    match lock.get_mut(server_id) {
+                        Some(server_cmds) => {
                             server_cmds.push(entry);
                             "Added new command to server's command list."
                         }
-                        None => "Added first command to server's command list.",
+                        None => {
+                            let _ = lock.insert(*server_id, vec![entry]);
+                            "Added first command to server's command list."
+                        }
                     }
                 }
                 _ => "Failed to acquire write lock on the command list.",
@@ -65,9 +68,9 @@ pub fn add_command(server_id: u64, regex_str: String, reply: String) -> String {
     }
 }
 
-pub fn remove_command(server_id: u64, index: usize) -> String {
+pub fn remove_command(server_id: &u64, index: usize) -> String {
     match CUST_CMDS.write() {
-        Ok(mut lock) => match lock.get_mut(&server_id) {
+        Ok(mut lock) => match lock.get_mut(server_id) {
             Some(server_cmds) => match server_cmds.len() <= index {
                 true => {
                     CHANGED.store(true, Ordering::Relaxed);
@@ -104,8 +107,8 @@ fn autosave_cmds() -> ! {
                         .iter()
                         .map(|(id, list)| {
                             (
-                                id.clone(),
-                                list.into_iter()
+                                *id,
+                                list.iter()
                                     .map(|(_reg, reg_str, reply)| (reg_str.clone(), reply.clone()))
                                     .collect(),
                             )
@@ -132,7 +135,7 @@ fn load_cmds() -> Servers {
             (
                 id,
                 list.into_iter()
-                    .map(|(reg_str, reply)| {
+                    .filter_map(|(reg_str, reply)| {
                         match RegexBuilder::new(&reg_str).size_limit(1 << 20).build() {
                             Ok(regex) => Some((regex, reg_str, reply)),
                             _ => {
@@ -141,7 +144,6 @@ fn load_cmds() -> Servers {
                             }
                         }
                     })
-                    .flatten()
                     .collect(),
             )
         })
