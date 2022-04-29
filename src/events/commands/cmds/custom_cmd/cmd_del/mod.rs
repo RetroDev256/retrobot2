@@ -7,7 +7,7 @@ use serenity::{
     },
 };
 
-use crate::custom_cmds::CUST_CMDS;
+use crate::custom_cmds::remove_command;
 
 pub mod setup;
 
@@ -26,28 +26,10 @@ pub async fn cmd_del(
     };
     let description = match number_option {
         Some(value) => match int.guild_id {
-            Some(guild_id) => match CUST_CMDS.write() {
-                Ok(mut lock) => match lock.get_mut(guild_id.as_u64()) {
-                    Some(server_cmds) => {
-                        let key_opt = match server_cmds.iter_mut().nth(value) {
-                            Some(entry) => Some(entry.0.clone()),
-                            _ => None,
-                        };
-                        match key_opt {
-                            Some(key) => {
-                                let _ = server_cmds.remove(&key);
-                                "Removed command from list of server commands."
-                            }
-                            _ => "Command was not present in list of commands.",
-                        }
-                    }
-                    _ => "Server has no commands.",
-                },
-                _ => "Couldn't acquire lock on command list.",
-            },
-            _ => "This is not a server.",
+            Some(guild_id) => remove_command(*guild_id.as_u64(), value),
+            _ => "This is not a server.".to_owned(),
         },
-        _ => "You must supply the index of the command.",
+        _ => "You must supply the index of the command.".to_owned(),
     };
     int.create_interaction_response(ctx.http, |resp| {
         resp.interaction_response_data(|data| data.ephemeral(true).content(description))
