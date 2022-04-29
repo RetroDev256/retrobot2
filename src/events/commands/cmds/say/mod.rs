@@ -14,7 +14,11 @@ pub async fn say(int: ApplicationCommandInteraction, ctx: Context) -> Result<(),
         if let Some(ApplicationCommandInteractionDataOptionValue::String(input)) =
             input_arg.resolved.as_ref()
         {
-            int.channel_id.say(ctx.http, input).await?;
+            int.channel_id.say(&ctx.http, input).await?;
+            int.create_followup_message(&ctx.http, |resp| resp.ephemeral(true).content("ok"))
+                .await?
+                .delete(ctx.http)
+                .await?;
         }
     };
     Ok(())
