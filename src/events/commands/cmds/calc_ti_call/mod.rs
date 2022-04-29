@@ -17,6 +17,8 @@ use serenity::{
 use tempfile::Builder;
 use wait_timeout::ChildExt;
 
+use crate::tools::filter_pings;
+
 enum CalcOut {
     Stdio(String, String),
     Error(String),
@@ -40,7 +42,7 @@ pub async fn calc_ti_call(
         _ => "An input must be supplied",
     };
     int.create_interaction_response(&ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.content(response))
+        resp.interaction_response_data(|data| data.content(filter_pings(response)))
     })
     .await?;
     if let Some(input) = input_option {
@@ -102,7 +104,7 @@ async fn calc_followup(
                 for (name, io) in [("OUT", out), ("ERR", err)] {
                     if !io.is_empty() {
                         int.create_followup_message(&ctx.http, |followup| {
-                            followup.content(format!("```\nSTD{}:\n{}```", name, io))
+                            followup.content(filter_pings(&format!("```\nSTD{}:\n{}```", name, io)))
                         })
                         .await?;
                     }
@@ -122,7 +124,7 @@ async fn calc_followup(
             }
         }
         CalcOut::Error(err) => {
-            int.create_followup_message(ctx.http, |followup| followup.content(err))
+            int.create_followup_message(ctx.http, |followup| followup.content(filter_pings(&err)))
                 .await?;
         }
     }

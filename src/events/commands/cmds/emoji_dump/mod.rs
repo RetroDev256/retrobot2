@@ -7,6 +7,8 @@ use serenity::{
     utils::MessageBuilder,
 };
 
+use crate::tools::filter_pings;
+
 pub async fn emoji_dump(
     int: ApplicationCommandInteraction,
     ctx: Context,
@@ -26,7 +28,8 @@ pub async fn emoji_dump(
         }
     }
     int.create_interaction_response(ctx.http, |response| {
-        response.interaction_response_data(|data| data.content(message_build.build()))
+        let content = filter_pings(&message_build.build());
+        response.interaction_response_data(|data| data.content(content))
     })
     .await?;
     Ok(())

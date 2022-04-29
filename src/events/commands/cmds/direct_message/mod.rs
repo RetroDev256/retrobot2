@@ -10,6 +10,8 @@ use serenity::{
     utils::MessageBuilder,
 };
 
+use crate::tools::filter_pings;
+
 pub async fn direct_message(
     int: ApplicationCommandInteraction,
     ctx: Context,
@@ -36,9 +38,9 @@ pub async fn direct_message(
                 .direct_message(&ctx.http, |create| {
                     create.content(
                         MessageBuilder::new()
-                            .push(&int.user.name)
+                            .push(filter_pings(&int.user.name))
                             .push_line(" says:")
-                            .push(text),
+                            .push(filter_pings(text)),
                     )
                 })
                 .await
@@ -52,7 +54,7 @@ pub async fn direct_message(
         false => "Can't send message to that user",
     };
     int.create_interaction_response(ctx.http, |reponse| {
-        reponse.interaction_response_data(|data| data.ephemeral(true).content(reply))
+        reponse.interaction_response_data(|data| data.ephemeral(true).content(filter_pings(reply)))
     })
     .await?;
     Ok(())

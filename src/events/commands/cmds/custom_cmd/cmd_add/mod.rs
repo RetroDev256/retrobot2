@@ -10,7 +10,7 @@ use serenity::{
     },
 };
 
-use crate::custom_cmds::add_command;
+use crate::{custom_cmds::add_command, tools::filter_pings};
 
 pub mod setup;
 
@@ -51,7 +51,7 @@ fn try_add_cmd(
 ) -> String {
     match (regex_option, reply_option) {
         (Some(regex_str), Some(reply)) => match guild_id {
-            Some(server_id) => add_command(server_id.as_u64(), regex_str, reply),
+            Some(server_id) => add_command(server_id.as_u64(), regex_str, filter_pings(&reply)),
             _ => "This is not a server".to_owned(),
         },
         (Some(_regex_str), None) => "Response was not provided.".to_owned(),

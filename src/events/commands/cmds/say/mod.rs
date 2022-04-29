@@ -7,6 +7,8 @@ use serenity::{
     },
 };
 
+use crate::tools::filter_pings;
+
 pub mod setup;
 
 pub async fn say(int: ApplicationCommandInteraction, ctx: Context) -> Result<(), Box<dyn Error>> {
@@ -18,7 +20,7 @@ pub async fn say(int: ApplicationCommandInteraction, ctx: Context) -> Result<(),
                 resp.interaction_response_data(|data| data.ephemeral(true).content("ok"))
             })
             .await?;
-            int.channel_id.say(&ctx.http, input).await?;
+            int.channel_id.say(&ctx.http, filter_pings(input)).await?;
         }
     };
     Ok(())

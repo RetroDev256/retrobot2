@@ -11,6 +11,8 @@ use serenity::{
 };
 use std::error::Error;
 
+use crate::tools::filter_pings;
+
 use self::dictionary::DICT;
 
 pub async fn acr_generator(
@@ -41,7 +43,7 @@ pub async fn acr_generator(
         false => &built_message,
     };
     int.create_interaction_response(ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.content(message))
+        resp.interaction_response_data(|data| data.content(filter_pings(message)))
     })
     .await?;
     Ok(())

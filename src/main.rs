@@ -1,5 +1,6 @@
-pub mod custom_cmds;
+mod custom_cmds;
 mod events;
+mod tools;
 
 use events::Handler;
 use serenity::{prelude::GatewayIntents, Client};
