@@ -18,8 +18,7 @@ pub async fn say(int: ApplicationCommandInteraction, ctx: Context) -> Result<(),
                 resp.interaction_response_data(|data| data.ephemeral(true).content("ok"))
             })
             .await?;
-            int.delete_original_interaction_response(&ctx.http).await?;
-            int.channel_id.say(ctx.http, input).await?;
+            int.channel_id.say(&ctx.http, input).await?;
         }
     };
     Ok(())
