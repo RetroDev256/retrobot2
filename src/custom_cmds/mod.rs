@@ -71,7 +71,7 @@ pub fn add_command(server_id: &u64, regex_str: String, reply: String) -> String 
 pub fn remove_command(server_id: &u64, index: usize) -> String {
     match CUST_CMDS.write() {
         Ok(mut lock) => match lock.get_mut(server_id) {
-            Some(server_cmds) => match server_cmds.len() <= index {
+            Some(server_cmds) => match index < server_cmds.len()  {
                 true => {
                     CHANGED.store(true, Ordering::Relaxed);
                     server_cmds.remove(index);
