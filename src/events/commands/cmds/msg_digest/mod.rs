@@ -44,11 +44,14 @@ pub async fn msg_digest(int: ApplicationCommandInteraction, ctx: Context) {
             .unwrap();
         }
         _ => {
-            let file = attachment.download().await.unwrap();
             int.create_interaction_response(&ctx.http, |resp| {
-                resp.interaction_response_data(|data| {
-                    data.content("Hashing blocks in file and combining them into digest...")
-                })
+                resp.interaction_response_data(|data| data.content("Downloading file..."))
+            })
+            .await
+            .unwrap();
+            let file = attachment.download().await.unwrap();
+            int.create_followup_message(&ctx.http, |data| {
+                data.content("Hashing blocks in file, combining into digest...")
             })
             .await
             .unwrap();
