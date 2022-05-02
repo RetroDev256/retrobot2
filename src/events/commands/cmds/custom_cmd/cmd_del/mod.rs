@@ -22,9 +22,7 @@ pub async fn cmd_del(int: ApplicationCommandInteraction, ctx: Context) {
         _ => "This is not a server.".to_owned(),
     };
     int.create_interaction_response(ctx.http, |resp| {
-        resp.interaction_response_data(|data| {
-            data.content(filter_pings(&description))
-        })
+        resp.interaction_response_data(|data| data.content(filter_pings(&description)))
     })
     .await
     .unwrap();
