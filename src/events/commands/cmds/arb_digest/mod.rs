@@ -12,7 +12,7 @@ use tempfile::Builder;
 
 use super::get_element;
 
-pub async fn msg_digest(int: ApplicationCommandInteraction, ctx: Context) {
+pub async fn digest(int: ApplicationCommandInteraction, ctx: Context) {
     let attachment = match get_element(&int, 0) {
         ApplicationCommandInteractionDataOptionValue::Attachment(file) => Some(file),
         _ => None,

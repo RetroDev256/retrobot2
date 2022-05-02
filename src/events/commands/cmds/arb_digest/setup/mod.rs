@@ -3,9 +3,9 @@ use serenity::{
     model::interactions::application_command::ApplicationCommandOptionType,
 };
 
-pub fn msg_digest_setup(cmds: &mut CreateApplicationCommands) {
+pub fn arb_digest_setup(cmds: &mut CreateApplicationCommands) {
     cmds.create_application_command(|cmd| {
-        cmd.name("msg_digest")
+        cmd.name("arb_digest")
             .description("Arb_Hash digest of a file")
             .create_option(|opt| {
                 opt.name("input")

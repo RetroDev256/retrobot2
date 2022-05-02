@@ -5,11 +5,11 @@ use serenity::{client::Context, model::interactions::Interaction};
 
 use self::cmds::{
     acr_generator::acr_generator,
+    arb_digest::digest,
     calc_ti_call::calc_ti_call,
     custom_cmd::{cmd_add::cmd_add, cmd_del::cmd_del, cmd_list::cmd_list},
     direct_message::direct_message,
     emoji_dump::emoji_dump,
-    msg_digest::msg_digest,
     say::say,
 };
 
@@ -24,7 +24,7 @@ pub async fn command_manage(ctx: Context, interaction: Interaction) {
             "cmd_add" => cmd_add(cmd_int, ctx).await,
             "cmd_del" => cmd_del(cmd_int, ctx).await,
             "cmd_list" => cmd_list(cmd_int, ctx).await,
-            "msg_digest" => msg_digest(cmd_int, ctx).await,
+            "arb_digest" => digest(cmd_int, ctx).await,
             _ => (),
         };
     }
