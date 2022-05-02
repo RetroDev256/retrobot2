@@ -9,42 +9,36 @@ use serenity::{
     },
     utils::MessageBuilder,
 };
-use std::error::Error;
 
 use crate::tools::filter_pings;
 
-use self::dictionary::DICT;
+use self::dictionary::get_elem_list;
 
-pub async fn acr_generator(
-    int: ApplicationCommandInteraction,
-    ctx: Context,
-) -> Result<(), Box<dyn Error>> {
-    let input_option = match int.data.options.get(0) {
-        Some(input_arg) => match input_arg.resolved.as_ref() {
-            Some(ApplicationCommandInteractionDataOptionValue::String(input)) => Some(input),
-            _ => None,
-        },
+use super::get_element;
+
+pub async fn acr_generator(int: ApplicationCommandInteraction, ctx: Context) {
+    let input = match get_element(&int, 0) {
+        ApplicationCommandInteractionDataOptionValue::String(input) => Some(input),
         _ => None,
-    };
+    }
+    .unwrap();
     let mut builder = MessageBuilder::new();
-    if let Some(input) = input_option {
+    {
         let mut thread_rng = ThreadRng::default();
-        const ALPHABET: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        for c in input.to_uppercase().chars() {
-            if let Some(pos) = ALPHABET.find(c) {
-                let index: usize = thread_rng.gen_range(0..DICT[pos].len());
-                builder.push(DICT[pos][index]).push(' ');
-            }
+        for c in input.chars() {
+            match get_elem_list(c) {
+                Some(list) => {
+                    let index = thread_rng.gen_range(0..list.len());
+                    builder.push(list[index]).push(' ')
+                }
+                _ => builder.push(format!("[No {}'s]", c)),
+            };
         }
     }
-    let built_message = builder.build();
-    let message = match built_message.is_empty() {
-        true => "Can't form that into an acronym.",
-        false => &built_message,
-    };
+    let message = filter_pings(&builder.build());
     int.create_interaction_response(ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.content(filter_pings(message)))
+        resp.interaction_response_data(|data| data.content(message))
     })
-    .await?;
-    Ok(())
+    .await
+    .unwrap();
 }

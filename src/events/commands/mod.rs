@@ -1,8 +1,6 @@
 pub mod cmd_setup;
 pub mod cmds;
 
-use std::error::Error;
-
 use serenity::{client::Context, model::interactions::Interaction};
 
 use self::cmds::{
@@ -14,7 +12,7 @@ use self::cmds::{
     say::say,
 };
 
-pub async fn command_manage(ctx: Context, interaction: Interaction) -> Result<(), Box<dyn Error>> {
+pub async fn command_manage(ctx: Context, interaction: Interaction) {
     if let Interaction::ApplicationCommand(cmd_int) = interaction {
         match cmd_int.data.name.as_str() {
             "dm" => direct_message(cmd_int, ctx).await,
@@ -25,8 +23,7 @@ pub async fn command_manage(ctx: Context, interaction: Interaction) -> Result<()
             "cmd_add" => cmd_add(cmd_int, ctx).await,
             "cmd_del" => cmd_del(cmd_int, ctx).await,
             "cmd_list" => cmd_list(cmd_int, ctx).await,
-            _ => Ok(()),
-        }?;
+            _ => (),
+        };
     }
-    Ok(())
 }

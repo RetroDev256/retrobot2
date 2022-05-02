@@ -1,7 +1,6 @@
 pub mod setup;
 
 use std::{
-    error::Error,
     io::{Read, Write},
     process::{Command, Stdio},
     time::Duration,
@@ -19,36 +18,25 @@ use wait_timeout::ChildExt;
 
 use crate::tools::filter_pings;
 
+use super::get_element;
+
 enum CalcOut {
     Stdio(String, String),
     Error(String),
 }
 
-pub async fn calc_ti_call(
-    int: ApplicationCommandInteraction,
-    ctx: Context,
-) -> Result<(), Box<dyn Error>> {
-    let input_option = match int.data.options.get(0) {
-        Some(input_arg) => match input_arg.resolved.as_ref() {
-            Some(ApplicationCommandInteractionDataOptionValue::String(input)) => {
-                Some(input.clone())
-            }
-            _ => None,
-        },
+pub async fn calc_ti_call(int: ApplicationCommandInteraction, ctx: Context) {
+    let input = match get_element(&int, 0) {
+        ApplicationCommandInteractionDataOptionValue::String(input) => Some(input),
         _ => None,
-    };
-    let response = match input_option {
-        Some(_) => "Starting the calc process...",
-        _ => "An input must be supplied",
-    };
-    int.create_interaction_response(&ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.content(filter_pings(response)))
-    })
-    .await?;
-    if let Some(input) = input_option {
-        calc_followup(int, ctx, call_calc(input)).await?;
     }
-    Ok(())
+    .unwrap();
+    int.create_interaction_response(&ctx.http, |resp| {
+        resp.interaction_response_data(|data| data.content("Starting the calc process..."))
+    })
+    .await
+    .unwrap();
+    calc_followup(&int, ctx, call_calc(input.to_owned())).await;
 }
 
 fn call_calc(input: String) -> CalcOut {
@@ -93,11 +81,7 @@ fn call_calc(input: String) -> CalcOut {
     }
 }
 
-async fn calc_followup(
-    int: ApplicationCommandInteraction,
-    ctx: Context,
-    result: CalcOut,
-) -> Result<(), Box<dyn Error>> {
+async fn calc_followup(int: &ApplicationCommandInteraction, ctx: Context, result: CalcOut) {
     match result {
         CalcOut::Stdio(out, err) => {
             if out.len() <= 1983 && err.len() <= 1983 {
@@ -106,27 +90,30 @@ async fn calc_followup(
                         int.create_followup_message(&ctx.http, |followup| {
                             followup.content(filter_pings(&format!("```\nSTD{}:\n{}```", name, io)))
                         })
-                        .await?;
+                        .await
+                        .unwrap();
                     }
                 }
             } else {
-                let mut tmp_content = Builder::new().suffix(".txt").tempfile()?;
+                let mut tmp_content = Builder::new().suffix(".txt").tempfile().unwrap();
                 writeln!(
                     tmp_content.as_file_mut(),
                     "Calc STDOUT:\n{}\nCalc STDERR:\n{}",
                     out,
                     err
-                )?;
+                )
+                .unwrap();
                 int.create_followup_message(ctx.http, |followup| {
                     followup.add_file(tmp_content.path())
                 })
-                .await?;
+                .await
+                .unwrap();
             }
         }
         CalcOut::Error(err) => {
             int.create_followup_message(ctx.http, |followup| followup.content(filter_pings(&err)))
-                .await?;
+                .await
+                .unwrap();
         }
     }
-    Ok(())
 }

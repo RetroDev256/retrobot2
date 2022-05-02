@@ -52,8 +52,16 @@ use x_list::X_LIST;
 use y_list::Y_LIST;
 use z_list::Z_LIST;
 
-pub const DICT: [&[&str]; 26] = [
+const DICT: [&[&str]; 26] = [
     A_LIST, B_LIST, C_LIST, D_LIST, E_LIST, F_LIST, G_LIST, H_LIST, I_LIST, J_LIST, K_LIST, L_LIST,
     M_LIST, N_LIST, O_LIST, P_LIST, Q_LIST, R_LIST, S_LIST, T_LIST, U_LIST, V_LIST, W_LIST, X_LIST,
     Y_LIST, Z_LIST,
 ];
+
+pub fn get_elem_list(character: char) -> Option<&'static [&'static str]> {
+    const ALPHABET: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    match ALPHABET.find(character.to_ascii_uppercase()) {
+        Some(index) => Some(DICT[index]),
+        _ => None,
+    }
+}

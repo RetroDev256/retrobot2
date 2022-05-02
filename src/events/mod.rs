@@ -31,8 +31,6 @@ impl EventHandler for Handler {
         }
     }
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
-        if command_manage(ctx, interaction).await.is_err() {
-            println!("Failed to manage slash command.");
-        }
+        command_manage(ctx, interaction).await;
     }
 }

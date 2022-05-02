@@ -1,5 +1,3 @@
-use std::error::Error;
-
 use serenity::{
     client::Context, model::interactions::application_command::ApplicationCommandInteraction,
 };
@@ -8,17 +6,15 @@ use crate::custom_cmds::get_commands;
 
 pub mod setup;
 
-pub async fn cmd_list(
-    int: ApplicationCommandInteraction,
-    ctx: Context,
-) -> Result<(), Box<dyn Error>> {
+pub async fn cmd_list(int: ApplicationCommandInteraction, ctx: Context) {
     int.create_interaction_response(&ctx.http, |resp| {
         resp.interaction_response_data(|data| {
             data.ephemeral(true)
                 .content("Listing commands for the server:")
         })
     })
-    .await?;
+    .await
+    .unwrap();
     let resp_opt = match int.guild_id {
         Some(guild_id) => {
             let server_cmds = get_commands(guild_id.as_u64());
@@ -37,7 +33,8 @@ pub async fn cmd_list(
                         int.create_followup_message(&ctx.http, |followup| {
                             followup.ephemeral(true).content(msg_content)
                         })
-                        .await?;
+                        .await
+                        .unwrap();
                     }
                     None
                 }
@@ -47,7 +44,7 @@ pub async fn cmd_list(
     };
     if let Some(resp) = resp_opt {
         int.create_followup_message(&ctx.http, |followup| followup.ephemeral(true).content(resp))
-            .await?;
+            .await
+            .unwrap();
     }
-    Ok(())
 }

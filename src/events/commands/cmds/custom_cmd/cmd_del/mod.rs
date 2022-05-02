@@ -1,5 +1,3 @@
-use std::error::Error;
-
 use serenity::{
     client::Context,
     model::interactions::application_command::{
@@ -7,33 +5,27 @@ use serenity::{
     },
 };
 
-use crate::custom_cmds::remove_command;
+use crate::{
+    custom_cmds::remove_command, events::commands::cmds::get_element, tools::filter_pings,
+};
 
 pub mod setup;
 
-pub async fn cmd_del(
-    int: ApplicationCommandInteraction,
-    ctx: Context,
-) -> Result<(), Box<dyn Error>> {
-    let number_option = match int.data.options.get(0) {
-        Some(number_arg) => match number_arg.resolved.as_ref() {
-            Some(ApplicationCommandInteractionDataOptionValue::Integer(number)) => {
-                Some(*number as usize)
-            }
-            _ => None,
-        },
+pub async fn cmd_del(int: ApplicationCommandInteraction, ctx: Context) {
+    let number = match get_element(&int, 0) {
+        ApplicationCommandInteractionDataOptionValue::Integer(number) => Some(number),
         _ => None,
-    };
-    let description = match number_option {
-        Some(value) => match int.guild_id {
-            Some(guild_id) => remove_command(guild_id.as_u64(), value),
-            _ => "This is not a server.".to_owned(),
-        },
-        _ => "You must supply the index of the command.".to_owned(),
+    }
+    .unwrap();
+    let description = match int.guild_id {
+        Some(guild_id) => remove_command(guild_id.as_u64(), *number as usize),
+        _ => "This is not a server.".to_owned(),
     };
     int.create_interaction_response(ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.ephemeral(true).content(description))
+        resp.interaction_response_data(|data| {
+            data.ephemeral(true).content(filter_pings(&description))
+        })
     })
-    .await?;
-    Ok(())
+    .await
+    .unwrap();
 }
