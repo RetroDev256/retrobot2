@@ -49,33 +49,33 @@ pub async fn msg_digest(int: ApplicationCommandInteraction, ctx: Context) {
                 resp.interaction_response_data(|data| {
                     data.content("Hashing blocks in file and combining them into digest...")
                 })
-            }).await.unwrap();
+            })
+            .await
+            .unwrap();
             let digest = arb_digest(&file, bytes as usize, rounds as u64);
             int.create_followup_message(&ctx.http, |data| {
                 data.content("Converting to hexadecimal...")
-            }).await.unwrap();
+            })
+            .await
+            .unwrap();
             let hex_bytes: String = digest
                 .into_iter()
                 .map(|byte| format!("{:02X}", byte))
                 .collect();
             if bytes <= 997 {
                 let message = format!("```{}```", hex_bytes);
-                int.create_followup_message(&ctx.http, |data| {
-                    data.content(message)
-                })
-                .await
-                .unwrap();
+                int.create_followup_message(&ctx.http, |data| data.content(message))
+                    .await
+                    .unwrap();
             } else {
                 let mut tmp_content = Builder::new().suffix(".txt").tempfile().unwrap();
-                int.create_followup_message(&ctx.http, |data| {
-                    data.content("Writing to file...")
-                }).await.unwrap();
+                int.create_followup_message(&ctx.http, |data| data.content("Writing to file..."))
+                    .await
+                    .unwrap();
                 write!(tmp_content, "{}", hex_bytes).unwrap();
-                int.create_followup_message(&ctx.http, |data| {
-                    data.add_file(tmp_content.path())
-                })
-                .await
-                .unwrap();
+                int.create_followup_message(&ctx.http, |data| data.add_file(tmp_content.path()))
+                    .await
+                    .unwrap();
             }
         }
     }
