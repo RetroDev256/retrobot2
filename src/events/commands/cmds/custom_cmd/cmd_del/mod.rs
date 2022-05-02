@@ -23,7 +23,7 @@ pub async fn cmd_del(int: ApplicationCommandInteraction, ctx: Context) {
     };
     int.create_interaction_response(ctx.http, |resp| {
         resp.interaction_response_data(|data| {
-            data.ephemeral(true).content(filter_pings(&description))
+            data.content(filter_pings(&description))
         })
     })
     .await

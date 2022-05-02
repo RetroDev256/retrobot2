@@ -25,7 +25,7 @@ pub async fn cmd_add(int: ApplicationCommandInteraction, ctx: Context) {
         _ => "This is not a server".to_owned(),
     };
     int.create_interaction_response(ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.ephemeral(true).content(filter_pings(&response)))
+        resp.interaction_response_data(|data| data.content(filter_pings(&response)))
     })
     .await
     .unwrap();
