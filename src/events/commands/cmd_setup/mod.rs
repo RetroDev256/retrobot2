@@ -14,12 +14,12 @@ pub async fn setup_commands(ctx: Context, ready: Ready) -> Result<(), Box<dyn Er
         guild
             .id
             .set_application_commands(&ctx.http, |cmds| {
+                arb_digest_setup(cmds);
                 acr_generator_setup(cmds);
                 calc_ti_call_setup(cmds);
                 direct_message_setup(cmds);
                 emoji_dump_setup(cmds);
                 custom_cmd_setup(cmds);
-                arb_digest_setup(cmds);
                 say_setup(cmds);
                 cmds
             })

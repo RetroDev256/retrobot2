@@ -24,7 +24,7 @@ pub async fn command_manage(ctx: Context, interaction: Interaction) {
             "cmd_add" => cmd_add(cmd_int, ctx).await,
             "cmd_del" => cmd_del(cmd_int, ctx).await,
             "cmd_list" => cmd_list(cmd_int, ctx).await,
-            "arb_digest" => digest(cmd_int, ctx).await,
+            "digest" => digest(cmd_int, ctx).await,
             _ => (),
         };
     }

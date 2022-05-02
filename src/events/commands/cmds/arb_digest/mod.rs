@@ -28,58 +28,40 @@ pub async fn digest(int: ApplicationCommandInteraction, ctx: Context) {
         _ => None,
     }
     .unwrap();
-    let range_err = match bytes <= 0 || bytes > 4194304 {
-        true => Some("The number of bytes in the digest must be between 1 or 4194304 bytes."),
-        false => match rounds <= 0 || rounds > 256 {
-            true => Some("The number of rounds must be between 1 and 256."),
-            false => None,
-        },
-    };
-    match range_err {
-        Some(err) => {
-            int.create_interaction_response(&ctx.http, |resp| {
-                resp.interaction_response_data(|data| data.content(err))
-            })
+    int.create_interaction_response(&ctx.http, |resp| {
+        resp.interaction_response_data(|data| data.content("Downloading file..."))
+    })
+    .await
+    .unwrap();
+    let file = attachment.download().await.unwrap();
+    int.create_followup_message(&ctx.http, |data| {
+        data.content("Hashing blocks in file, combining into digest...")
+    })
+    .await
+    .unwrap();
+    let digest = arb_digest(&file, bytes as usize, rounds as u64);
+    int.create_followup_message(&ctx.http, |data| {
+        data.content("Converting to hexadecimal...")
+    })
+    .await
+    .unwrap();
+    let hex_bytes: String = digest
+        .into_iter()
+        .map(|byte| format!("{:02X}", byte))
+        .collect();
+    if bytes <= 997 {
+        let message = format!("```{}```", hex_bytes);
+        int.create_followup_message(&ctx.http, |data| data.content(message))
             .await
             .unwrap();
-        }
-        _ => {
-            int.create_interaction_response(&ctx.http, |resp| {
-                resp.interaction_response_data(|data| data.content("Downloading file..."))
-            })
+    } else {
+        let mut tmp_content = Builder::new().suffix(".txt").tempfile().unwrap();
+        int.create_followup_message(&ctx.http, |data| data.content("Writing to file..."))
             .await
             .unwrap();
-            let file = attachment.download().await.unwrap();
-            int.create_followup_message(&ctx.http, |data| {
-                data.content("Hashing blocks in file, combining into digest...")
-            })
+        write!(tmp_content, "{}", hex_bytes).unwrap();
+        int.create_followup_message(&ctx.http, |data| data.add_file(tmp_content.path()))
             .await
             .unwrap();
-            let digest = arb_digest(&file, bytes as usize, rounds as u64);
-            int.create_followup_message(&ctx.http, |data| {
-                data.content("Converting to hexadecimal...")
-            })
-            .await
-            .unwrap();
-            let hex_bytes: String = digest
-                .into_iter()
-                .map(|byte| format!("{:02X}", byte))
-                .collect();
-            if bytes <= 997 {
-                let message = format!("```{}```", hex_bytes);
-                int.create_followup_message(&ctx.http, |data| data.content(message))
-                    .await
-                    .unwrap();
-            } else {
-                let mut tmp_content = Builder::new().suffix(".txt").tempfile().unwrap();
-                int.create_followup_message(&ctx.http, |data| data.content("Writing to file..."))
-                    .await
-                    .unwrap();
-                write!(tmp_content, "{}", hex_bytes).unwrap();
-                int.create_followup_message(&ctx.http, |data| data.add_file(tmp_content.path()))
-                    .await
-                    .unwrap();
-            }
-        }
     }
 }
