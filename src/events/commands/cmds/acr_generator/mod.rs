@@ -29,13 +29,13 @@ pub async fn acr_generator(int: ApplicationCommandInteraction, ctx: Context) {
             match get_elem_list(c) {
                 Some(list) => {
                     let index = thread_rng.gen_range(0..list.len());
-                    builder.push(list[index]).push(' ')
+                    builder.push(list[index]).push(' ');
                 }
-                _ => builder.push(format!("[No {}'s]", c)),
-            };
+                _ => ()
+            }
         }
     }
-    let message = filter_pings(&builder.build());
+    let message = filter_pings(&builder.build()).trim();
     int.create_interaction_response(ctx.http, |resp| {
         resp.interaction_response_data(|data| data.content(message))
     })
