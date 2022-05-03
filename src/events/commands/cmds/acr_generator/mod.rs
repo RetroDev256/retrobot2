@@ -35,9 +35,9 @@ pub async fn acr_generator(int: ApplicationCommandInteraction, ctx: Context) {
             }
         }
     }
-    let message = filter_pings(&builder.build()).trim();
+    let message = filter_pings(&builder.build());
     int.create_interaction_response(ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.content(message))
+        resp.interaction_response_data(|data| data.content(message.trim()))
     })
     .await
     .unwrap();
