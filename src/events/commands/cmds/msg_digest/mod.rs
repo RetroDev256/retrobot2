@@ -16,7 +16,9 @@ pub async fn msg_digest(int: ApplicationCommandInteraction, ctx: Context) {
     }
     .unwrap();
     int.create_interaction_response(&ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.content("Hashing blocks in message, combining into digest..."))
+        resp.interaction_response_data(|data| {
+            data.content("Hashing blocks in message, combining into digest...")
+        })
     })
     .await
     .unwrap();
