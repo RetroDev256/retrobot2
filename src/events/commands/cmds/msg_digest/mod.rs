@@ -1,7 +1,7 @@
 pub mod setup;
 
 use super::get_element;
-use arb_hash::{block::AHBlock, digest::arb_digest};
+use arb_hash::block::AHBlock;
 use serenity::{
     client::Context,
     model::interactions::application_command::{
