@@ -23,11 +23,6 @@ pub async fn msg_digest(int: ApplicationCommandInteraction, ctx: Context) {
     .await
     .unwrap();
     let digest = AHBlock::<64>::arb_digest::<2>(text.as_bytes());
-    int.create_followup_message(&ctx.http, |data| {
-        data.content("Converting to hexadecimal...")
-    })
-    .await
-    .unwrap();
     let hex_bytes: String = digest
         .data
         .into_iter()

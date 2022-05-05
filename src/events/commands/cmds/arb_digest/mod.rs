@@ -16,22 +16,14 @@ pub async fn digest(int: ApplicationCommandInteraction, ctx: Context) {
     }
     .unwrap();
     int.create_interaction_response(&ctx.http, |resp| {
-        resp.interaction_response_data(|data| data.content("Downloading file..."))
+        resp.interaction_response_data(|data| {
+            data.content("Downloading file, hashing blocks in file, combining into digest..")
+        })
     })
     .await
     .unwrap();
     let file = attachment.download().await.unwrap();
-    int.create_followup_message(&ctx.http, |data| {
-        data.content("Hashing blocks in file, combining into digest...")
-    })
-    .await
-    .unwrap();
     let digest = AHBlock::<64>::arb_digest_parallel::<2>(file.as_slice(), num_cpus::get());
-    int.create_followup_message(&ctx.http, |data| {
-        data.content("Converting to hexadecimal...")
-    })
-    .await
-    .unwrap();
     let hex_bytes: String = digest
         .data
         .into_iter()
