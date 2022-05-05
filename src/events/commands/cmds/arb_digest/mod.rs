@@ -7,24 +7,11 @@ use serenity::{
         ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
     },
 };
-use std::io::Write;
-use tempfile::Builder;
-
 use super::get_element;
 
 pub async fn digest(int: ApplicationCommandInteraction, ctx: Context) {
     let attachment = match get_element(&int, 0) {
         ApplicationCommandInteractionDataOptionValue::Attachment(file) => Some(file),
-        _ => None,
-    }
-    .unwrap();
-    let bytes = *match get_element(&int, 1) {
-        ApplicationCommandInteractionDataOptionValue::Integer(bytes) => Some(bytes),
-        _ => None,
-    }
-    .unwrap();
-    let rounds = *match get_element(&int, 2) {
-        ApplicationCommandInteractionDataOptionValue::Integer(rounds) => Some(rounds),
         _ => None,
     }
     .unwrap();
@@ -39,7 +26,7 @@ pub async fn digest(int: ApplicationCommandInteraction, ctx: Context) {
     })
     .await
     .unwrap();
-    let digest = arb_digest(&file, bytes as usize, rounds as u64);
+    let digest = arb_digest::<2, 64>(&file);
     int.create_followup_message(&ctx.http, |data| {
         data.content("Converting to hexadecimal...")
     })
@@ -49,19 +36,8 @@ pub async fn digest(int: ApplicationCommandInteraction, ctx: Context) {
         .into_iter()
         .map(|byte| format!("{:02X}", byte))
         .collect();
-    if bytes <= 997 {
-        let message = format!("```{}```", hex_bytes);
-        int.create_followup_message(&ctx.http, |data| data.content(message))
-            .await
-            .unwrap();
-    } else {
-        let mut tmp_content = Builder::new().suffix(".txt").tempfile().unwrap();
-        int.create_followup_message(&ctx.http, |data| data.content("Writing to file..."))
-            .await
-            .unwrap();
-        write!(tmp_content, "{}", hex_bytes).unwrap();
-        int.create_followup_message(&ctx.http, |data| data.add_file(tmp_content.path()))
-            .await
-            .unwrap();
-    }
+    let message = format!("```{}```", hex_bytes);
+    int.create_followup_message(&ctx.http, |data| data.content(message))
+        .await
+        .unwrap();
 }
