@@ -31,7 +31,7 @@ pub async fn acr_generator(int: ApplicationCommandInteraction, ctx: Context) {
                     let index = thread_rng.gen_range(0..list.len());
                     builder.push(list[index]).push(' ');
                 }
-                _ => ()
+                _ => (),
             }
         }
     }

@@ -1,5 +1,6 @@
 pub mod setup;
 
+use super::get_element;
 use arb_hash::digest::arb_digest;
 use serenity::{
     client::Context,
@@ -7,7 +8,6 @@ use serenity::{
         ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
     },
 };
-use super::get_element;
 
 pub async fn digest(int: ApplicationCommandInteraction, ctx: Context) {
     let attachment = match get_element(&int, 0) {
