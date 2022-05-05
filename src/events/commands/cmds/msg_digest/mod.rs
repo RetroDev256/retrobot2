@@ -1,7 +1,7 @@
 pub mod setup;
 
 use super::get_element;
-use arb_hash::digest::arb_digest;
+use arb_hash::{block::AHBlock, digest::arb_digest};
 use serenity::{
     client::Context,
     model::interactions::application_command::{
@@ -22,13 +22,14 @@ pub async fn msg_digest(int: ApplicationCommandInteraction, ctx: Context) {
     })
     .await
     .unwrap();
-    let digest = arb_digest::<2, 64>(text.as_bytes());
+    let digest = AHBlock::<64>::arb_digest::<2>(text.as_bytes());
     int.create_followup_message(&ctx.http, |data| {
         data.content("Converting to hexadecimal...")
     })
     .await
     .unwrap();
     let hex_bytes: String = digest
+        .data
         .into_iter()
         .map(|byte| format!("{:02X}", byte))
         .collect();
