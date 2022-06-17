@@ -1,7 +1,7 @@
 pub mod cmd_setup;
 pub mod cmds;
 
-use serenity::{client::Context, model::interactions::Interaction};
+use serenity::{client::Context, model::prelude::interaction::Interaction};
 
 use self::cmds::{
     acr_generator::acr_generator,

@@ -4,14 +4,14 @@ use super::get_element;
 use arb_hash::block::AHBlock;
 use serenity::{
     client::Context,
-    model::interactions::application_command::{
-        ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
+    model::prelude::interaction::application_command::{
+        ApplicationCommandInteraction, CommandDataOptionValue,
     },
 };
 
 pub async fn msg_digest(int: ApplicationCommandInteraction, ctx: Context) {
     let text = match get_element(&int, 0) {
-        ApplicationCommandInteractionDataOptionValue::String(text) => Some(text),
+        CommandDataOptionValue::String(text) => Some(text),
         _ => None,
     }
     .unwrap();

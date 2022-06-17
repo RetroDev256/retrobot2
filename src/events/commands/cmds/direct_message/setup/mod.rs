@@ -1,7 +1,4 @@
-use serenity::{
-    builder::CreateApplicationCommands,
-    model::interactions::application_command::ApplicationCommandOptionType,
-};
+use serenity::{builder::CreateApplicationCommands, model::prelude::command::CommandOptionType};
 
 pub fn direct_message_setup(cmds: &mut CreateApplicationCommands) {
     cmds.create_application_command(|cmd| {
@@ -10,13 +7,13 @@ pub fn direct_message_setup(cmds: &mut CreateApplicationCommands) {
             .create_option(|opt| {
                 opt.name("user")
                     .description("User to message")
-                    .kind(ApplicationCommandOptionType::User)
+                    .kind(CommandOptionType::User)
                     .required(true)
             })
             .create_option(|opt| {
                 opt.name("text")
                     .description("Text to message user")
-                    .kind(ApplicationCommandOptionType::String)
+                    .kind(CommandOptionType::String)
                     .required(true)
             })
     });

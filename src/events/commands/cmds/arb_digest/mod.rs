@@ -4,14 +4,14 @@ use super::get_element;
 use arb_hash::block::AHBlock;
 use serenity::{
     client::Context,
-    model::interactions::application_command::{
-        ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
+    model::prelude::interaction::application_command::{
+        ApplicationCommandInteraction, CommandDataOptionValue,
     },
 };
 
 pub async fn digest(int: ApplicationCommandInteraction, ctx: Context) {
     let attachment = match get_element(&int, 0) {
-        ApplicationCommandInteractionDataOptionValue::Attachment(file) => Some(file),
+        CommandDataOptionValue::Attachment(file) => Some(file),
         _ => None,
     }
     .unwrap();

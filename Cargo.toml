@@ -13,7 +13,7 @@ panic = 'abort'     # Abort on panic
 
 [dependencies]
 ron = {git = "https://github.com/ron-rs/ron"}
-rand = {version = "0.8.5"}
+rand = '*'
 arb_hash = '*'
 regex = {git = "https://github.com/rust-lang/regex"}
 tempfile = {git = "https://github.com/Stebalien/tempfile"}

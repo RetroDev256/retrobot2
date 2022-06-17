@@ -1,7 +1,7 @@
 use serenity::{
     client::Context,
-    model::interactions::application_command::{
-        ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
+    model::prelude::interaction::application_command::{
+        ApplicationCommandInteraction, CommandDataOptionValue,
     },
 };
 
@@ -11,12 +11,12 @@ pub mod setup;
 
 pub async fn cmd_add(int: ApplicationCommandInteraction, ctx: Context) {
     let regex = match get_element(&int, 0) {
-        ApplicationCommandInteractionDataOptionValue::String(regex) => Some(regex),
+        CommandDataOptionValue::String(regex) => Some(regex),
         _ => None,
     }
     .unwrap();
     let reply = match get_element(&int, 1) {
-        ApplicationCommandInteractionDataOptionValue::String(reply) => Some(reply),
+        CommandDataOptionValue::String(reply) => Some(reply),
         _ => None,
     }
     .unwrap();

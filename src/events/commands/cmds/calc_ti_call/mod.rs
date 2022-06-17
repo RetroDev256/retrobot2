@@ -8,8 +8,8 @@ use std::{
 
 use serenity::{
     client::Context,
-    model::interactions::application_command::{
-        ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
+    model::prelude::interaction::application_command::{
+        ApplicationCommandInteraction, CommandDataOptionValue,
     },
 };
 
@@ -27,7 +27,7 @@ enum CalcOut {
 
 pub async fn calc_ti_call(int: ApplicationCommandInteraction, ctx: Context) {
     let input = match get_element(&int, 0) {
-        ApplicationCommandInteractionDataOptionValue::String(input) => Some(input),
+        CommandDataOptionValue::String(input) => Some(input),
         _ => None,
     }
     .unwrap();

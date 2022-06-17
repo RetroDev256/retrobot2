@@ -1,7 +1,4 @@
-use serenity::{
-    builder::CreateApplicationCommands,
-    model::interactions::application_command::ApplicationCommandOptionType,
-};
+use serenity::{builder::CreateApplicationCommands, model::prelude::command::CommandOptionType};
 
 pub fn arb_digest_setup(cmds: &mut CreateApplicationCommands) {
     cmds.create_application_command(|cmd| {
@@ -10,7 +7,7 @@ pub fn arb_digest_setup(cmds: &mut CreateApplicationCommands) {
             .create_option(|opt| {
                 opt.name("input")
                     .description("File to compute digest of")
-                    .kind(ApplicationCommandOptionType::Attachment)
+                    .kind(CommandOptionType::Attachment)
                     .required(true)
             })
     });

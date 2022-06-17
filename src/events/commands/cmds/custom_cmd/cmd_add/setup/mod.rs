@@ -1,7 +1,4 @@
-use serenity::{
-    builder::CreateApplicationCommands,
-    model::interactions::application_command::ApplicationCommandOptionType,
-};
+use serenity::{builder::CreateApplicationCommands, model::prelude::command::CommandOptionType};
 
 pub fn cmd_add_setup(cmds: &mut CreateApplicationCommands) {
     cmds.create_application_command(|cmd| {
@@ -10,13 +7,13 @@ pub fn cmd_add_setup(cmds: &mut CreateApplicationCommands) {
             .create_option(|opt| {
                 opt.name("regex")
                     .description("Regex to match user messages")
-                    .kind(ApplicationCommandOptionType::String)
+                    .kind(CommandOptionType::String)
                     .required(true)
             })
             .create_option(|opt| {
                 opt.name("response")
                     .description("Response to matching messages")
-                    .kind(ApplicationCommandOptionType::String)
+                    .kind(CommandOptionType::String)
                     .required(true)
             })
     });

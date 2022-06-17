@@ -39,7 +39,8 @@ pub fn add_command(server_id: &u64, regex_str: String, reply: String) -> String 
             match CUST_CMDS.write() {
                 Ok(mut lock) => {
                     CHANGED.store(true, Ordering::Relaxed);
-                    match lock.get_mut(server_id) {
+                    let cmds: Option<_> = lock.get_mut(server_id);
+                    match cmds {
                         Some(server_cmds) => {
                             server_cmds.push(entry);
                             "Added new command to server's command list."
@@ -70,17 +71,20 @@ pub fn add_command(server_id: &u64, regex_str: String, reply: String) -> String 
 
 pub fn remove_command(server_id: &u64, index: usize) -> String {
     match CUST_CMDS.write() {
-        Ok(mut lock) => match lock.get_mut(server_id) {
-            Some(server_cmds) => match index < server_cmds.len() {
-                true => {
-                    CHANGED.store(true, Ordering::Relaxed);
-                    server_cmds.remove(index);
-                    "Successfully removed command."
-                }
-                _ => "Server doesn't have that command.",
-            },
-            _ => "Server has no commands.",
-        },
+        Ok(mut lock) => {
+            let cmds: Option<_> = lock.get_mut(server_id);
+            match cmds {
+                Some(server_cmds) => match index < server_cmds.len() {
+                    true => {
+                        CHANGED.store(true, Ordering::Relaxed);
+                        server_cmds.remove(index);
+                        "Successfully removed command."
+                    }
+                    _ => "Server doesn't have that command.",
+                },
+                _ => "Server has no commands.",
+            }
+        }
         _ => "Failed to acquire write lock on the command list.",
     }
     .to_owned()

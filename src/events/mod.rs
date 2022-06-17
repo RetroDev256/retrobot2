@@ -6,7 +6,7 @@ mod ready;
 use serenity::{
     async_trait,
     client::{Context, EventHandler},
-    model::{channel::Message, gateway::Ready, guild::Member, interactions::Interaction},
+    model::{channel::Message, gateway::Ready, guild::Member, prelude::interaction::Interaction},
 };
 
 use self::{commands::command_manage, greets::greet, message::message_event, ready::shard_start};

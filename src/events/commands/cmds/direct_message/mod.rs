@@ -2,8 +2,8 @@ pub mod setup;
 
 use serenity::{
     client::Context,
-    model::interactions::application_command::{
-        ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
+    model::prelude::interaction::application_command::{
+        ApplicationCommandInteraction, CommandDataOptionValue,
     },
     utils::MessageBuilder,
 };
@@ -14,12 +14,12 @@ use super::get_element;
 
 pub async fn direct_message(int: ApplicationCommandInteraction, ctx: Context) {
     let user = match get_element(&int, 0) {
-        ApplicationCommandInteractionDataOptionValue::User(user, member) => Some((user, member)),
+        CommandDataOptionValue::User(user, member) => Some((user, member)),
         _ => None,
     }
     .unwrap();
     let text = match get_element(&int, 1) {
-        ApplicationCommandInteractionDataOptionValue::String(text) => Some(text),
+        CommandDataOptionValue::String(text) => Some(text),
         _ => None,
     }
     .unwrap();

@@ -4,8 +4,8 @@ pub mod setup;
 use rand::{prelude::ThreadRng, Rng};
 use serenity::{
     client::Context,
-    model::interactions::application_command::{
-        ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
+    model::prelude::interaction::application_command::{
+        ApplicationCommandInteraction, CommandDataOptionValue,
     },
     utils::MessageBuilder,
 };
@@ -18,7 +18,7 @@ use super::get_element;
 
 pub async fn acr_generator(int: ApplicationCommandInteraction, ctx: Context) {
     let input = match get_element(&int, 0) {
-        ApplicationCommandInteractionDataOptionValue::String(input) => Some(input),
+        CommandDataOptionValue::String(input) => Some(input),
         _ => None,
     }
     .unwrap();
@@ -26,12 +26,9 @@ pub async fn acr_generator(int: ApplicationCommandInteraction, ctx: Context) {
     {
         let mut thread_rng = ThreadRng::default();
         for c in input.chars() {
-            match get_elem_list(c) {
-                Some(list) => {
-                    let index = thread_rng.gen_range(0..list.len());
-                    builder.push(list[index]).push(' ');
-                }
-                _ => (),
+            if let Some(list) = get_elem_list(c) {
+                let index = thread_rng.gen_range(0..list.len());
+                builder.push(list[index]).push(' ');
             }
         }
     }

@@ -1,5 +1,5 @@
-use serenity::model::interactions::application_command::{
-    ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
+use serenity::model::prelude::interaction::application_command::{
+    ApplicationCommandInteraction, CommandDataOptionValue,
 };
 
 pub mod acr_generator;
@@ -11,10 +11,7 @@ pub mod emoji_dump;
 pub mod msg_digest;
 pub mod say;
 
-pub fn get_element(
-    int: &ApplicationCommandInteraction,
-    index: usize,
-) -> &ApplicationCommandInteractionDataOptionValue {
+pub fn get_element(int: &ApplicationCommandInteraction, index: usize) -> &CommandDataOptionValue {
     return int
         .data
         .options

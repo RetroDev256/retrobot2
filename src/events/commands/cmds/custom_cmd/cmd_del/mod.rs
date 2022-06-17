@@ -1,7 +1,7 @@
 use serenity::{
     client::Context,
-    model::interactions::application_command::{
-        ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue,
+    model::prelude::interaction::application_command::{
+        ApplicationCommandInteraction, CommandDataOptionValue,
     },
 };
 
@@ -13,7 +13,7 @@ pub mod setup;
 
 pub async fn cmd_del(int: ApplicationCommandInteraction, ctx: Context) {
     let number = match get_element(&int, 0) {
-        ApplicationCommandInteractionDataOptionValue::Integer(number) => Some(number),
+        CommandDataOptionValue::Integer(number) => Some(number),
         _ => None,
     }
     .unwrap();
